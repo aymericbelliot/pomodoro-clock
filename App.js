@@ -9,12 +9,12 @@ class App extends React.Component {
       timeLeft: "",
       isPlaying: false,
       isSession: "Session",
-      beep: "alarm.wav",
     }
   }
 
   reset = () => {
     clearInterval(this.timer);
+    document.getElementById("beep").pause();
     this.setState({
       breakLength: 5,
       sessionLength: 25,
@@ -78,7 +78,7 @@ class App extends React.Component {
         isPlaying: false
       })
     } else {
-      this.timer = setInterval(() => this.tick(), 1000);
+      this.timer = setInterval(() => this.tick(), 100);
       this.setState({
         isPlaying: true
       })
@@ -86,6 +86,10 @@ class App extends React.Component {
   }
 
   tick = () => {
+    if (this.state.counterSession == 0 || this.state.counterBreak == 0) {
+      document.getElementById("beep").play();
+    }
+
     if (this.state.counterSession > 0) {
       this.setState({
         timeLeft: this.setTimeLeft(this.state.counterSession - 1),
@@ -174,7 +178,7 @@ class PomodoroClock extends React.Component {
         <div className="text-center">
           <p id="timer-label">{this.props.isSession}</p>
           <h2 id="time-left">{this.props.timeLeft}</h2>
-          <audio id="beep" src={this.props.beep}></audio>
+          <audio id="beep" src="alarm.wav"></audio>
           <div className="d-flex justify-content-center align-items-center">
             <i id="star_stop" className={playStyle} onClick={this.play.bind(this)}></i>
             <i id="reset" className="fas fa-sync-alt m-1" onClick={this.reset.bind(this)}></i>
